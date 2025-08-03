@@ -14,8 +14,13 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
+#include "led.h"
+#include "key.h"
+
 int main(void)
 {
+    key_beep_irq_test();
+
     int count = 1;
 
     while (count++)
