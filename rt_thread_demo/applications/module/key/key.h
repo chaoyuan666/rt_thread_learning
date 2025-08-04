@@ -12,5 +12,6 @@
 
 void key_beep_test(void);
 void key_beep_irq_test(void);
+void key_beep(void);
 
 #endif /* APPLICATIONS_MODULE_KEY_KEY_H_ */

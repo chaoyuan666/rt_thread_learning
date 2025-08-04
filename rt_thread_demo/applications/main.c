@@ -16,10 +16,15 @@
 
 #include "led.h"
 #include "key.h"
+#include "task.h"
+
+
+
 
 int main(void)
 {
-    key_beep_irq_test();
+//    key_beep_irq_test();
+    task_static_test();
 
     int count = 1;
 
