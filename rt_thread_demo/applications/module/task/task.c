@@ -37,3 +37,25 @@ void task_test(void)
     rt_thread_startup(&led_thread);
     rt_thread_startup(tkey);
 }
+
+uint8_t stop_flag = 0;
+
+void stop_led(void)
+{
+    stop_flag = 1;
+}
+
+void resume_led(void)
+{
+    stop_flag = 0;
+    rt_thread_resume(&led_thread);
+}
+
+void delete_led(void)
+{
+    rt_thread_detach(&led_thread);
+}
+
+MSH_CMD_EXPORT(stop_led, stop the led thread)
+MSH_CMD_EXPORT(resume_led, resume the led thread)
+MSH_CMD_EXPORT(delete_led, delete the led thread)
