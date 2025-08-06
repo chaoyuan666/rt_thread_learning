@@ -67,3 +67,32 @@ void key_beep(void)
         }
     }
 }
+
+rt_sem_t semkey;
+static void callback()
+{
+    rt_pin_irq_enable(KEY_PIN, PIN_IRQ_DISABLE);
+    rt_sem_release(semkey);
+}
+
+void key(void)
+{
+    semkey = rt_sem_create("skey", 0, RT_IPC_FLAG_PRIO);
+    rt_pin_mode(KEY_PIN, PIN_MODE_INPUT_PULLUP);
+    rt_pin_mode(BEEP_PIN, PIN_MODE_OUTPUT);
+    rt_pin_write(BEEP_PIN, PIN_HIGH);
+
+    rt_pin_attach_irq(KEY_PIN, PIN_IRQ_MODE_FALLING, callback, RT_NULL);
+    rt_pin_irq_enable(KEY_PIN, PIN_IRQ_ENABLE);
+    while (1)
+    {
+        rt_sem_take(semkey, RT_WAITING_FOREVER);
+        rt_thread_mdelay(20);  /* Eliminate the effect of button press jitter */
+        if (rt_pin_read(KEY_PIN) == PIN_LOW) {
+            rt_pin_write(BEEP_PIN, !rt_pin_read(BEEP_PIN));
+        }
+        rt_thread_mdelay(300); /* Eliminate the effect of button release jitter */
+        rt_pin_irq_enable(KEY_PIN, PIN_IRQ_ENABLE);
+    }
+}
+

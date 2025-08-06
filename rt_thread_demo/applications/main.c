@@ -25,8 +25,8 @@ int main(void)
 {
 //    key_beep_irq_test();
 //    task_static_test();
-    task_test();
-//    key();
+//    task_test();
+    key();
 
     int count = 1;
 
