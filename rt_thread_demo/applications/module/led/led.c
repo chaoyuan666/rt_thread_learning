@@ -31,18 +31,34 @@ void led_test(void)
     }
 }
 
-uint8_t width = 0;
+
+rt_sem_t sem_pwm;
 
 void pwm(void)
 {
+    sem_pwm = rt_sem_create("pwm", 0, RT_IPC_FLAG_PRIO);
+    uint8_t width = 0;
     uint8_t cycle = 10;
     rt_pin_mode(LED1_PIN, PIN_MODE_OUTPUT);
     while (1)
     {
-        rt_pin_write(LED1_PIN, PIN_HIGH);
-        rt_thread_mdelay(width);
-        rt_pin_write(LED1_PIN, PIN_LOW);
-        rt_thread_mdelay(cycle-width);
+        rt_sem_take(sem_pwm, RT_WAITING_FOREVER);
+        for (width = 0; width < cycle; ++width) {
+            for (int i = 0; i < 5; ++i) {
+                rt_pin_write(LED1_PIN, PIN_HIGH);
+                rt_thread_mdelay(width);
+                rt_pin_write(LED1_PIN, PIN_LOW);
+                rt_thread_mdelay(cycle-width);
+            }
+        }
+        for (width = cycle; width > 0; --width) {
+            for (int i = 0; i < 5; ++i) {
+                rt_pin_write(LED1_PIN, PIN_HIGH);
+                rt_thread_mdelay(width);
+                rt_pin_write(LED1_PIN, PIN_LOW);
+                rt_thread_mdelay(cycle-width);
+            }
+        }
     }
 }
 

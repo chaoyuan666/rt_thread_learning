@@ -75,7 +75,7 @@ static void callback()
     rt_sem_release(semkey);
 }
 
-extern uint8_t width;
+extern rt_sem_t sem_pwm;;
 
 void key(void)
 {
@@ -92,7 +92,7 @@ void key(void)
         rt_thread_mdelay(20);  /* Eliminate the effect of button press jitter */
         if (rt_pin_read(KEY_PIN) == PIN_LOW) {
             rt_pin_write(BEEP_PIN, !rt_pin_read(BEEP_PIN));
-            width++;
+            rt_sem_release(semkey);
         }
         rt_thread_mdelay(300); /* Eliminate the effect of button release jitter */
         rt_pin_irq_enable(KEY_PIN, PIN_IRQ_ENABLE);
