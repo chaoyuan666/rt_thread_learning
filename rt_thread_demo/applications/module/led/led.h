@@ -11,5 +11,6 @@
 #define APPLICATIONS_MODULE_LED_H_
 
 void led_test(void);
+void pwm(void);
 
 #endif /* APPLICATIONS_MODULE_LED_H_ */

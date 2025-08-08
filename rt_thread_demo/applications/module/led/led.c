@@ -31,5 +31,18 @@ void led_test(void)
     }
 }
 
+uint8_t width = 0;
 
+void pwm(void)
+{
+    uint8_t cycle = 10;
+    rt_pin_mode(LED1_PIN, PIN_MODE_OUTPUT);
+    while (1)
+    {
+        rt_pin_write(LED1_PIN, PIN_HIGH);
+        rt_thread_mdelay(width);
+        rt_pin_write(LED1_PIN, PIN_LOW);
+        rt_thread_mdelay(cycle-width);
+    }
+}
 
