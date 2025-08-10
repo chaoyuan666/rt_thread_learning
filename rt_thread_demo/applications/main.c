@@ -17,7 +17,7 @@
 #include "led.h"
 #include "key.h"
 #include "task.h"
-
+#include "keyboard.h"
 
 
 
@@ -27,6 +27,7 @@ int main(void)
 //    task_static_test();
 //    task_test();
 //    key();
+    keyboard();
 
     rt_thread_startup(rt_thread_create("tkey", key, RT_NULL, 1024, 20, 10));
     rt_thread_startup(rt_thread_create("tpwm", pwm, RT_NULL, 1024, 20, 10));
