@@ -27,17 +27,25 @@ int main(void)
 //    task_static_test();
 //    task_test();
 //    key();
-    keyboard();
+//    keyboard();
+//
+//    rt_thread_startup(rt_thread_create("tkey", key, RT_NULL, 1024, 20, 10));
+//    rt_thread_startup(rt_thread_create("tpwm", pwm, RT_NULL, 1024, 20, 10));
+//
+//    int count = 1;
+//
+//    while (count++)
+//    {
+//        LOG_D("Hello RT-Thread!");
+//        rt_thread_mdelay(1000);
+//    }
 
-    rt_thread_startup(rt_thread_create("tkey", key, RT_NULL, 1024, 20, 10));
-    rt_thread_startup(rt_thread_create("tpwm", pwm, RT_NULL, 1024, 20, 10));
+    rt_thread_startup(rt_thread_create("keyboard", keyboard, RT_NULL, 1024, 20, 10));
+    rt_thread_mdelay(10000);
 
-    int count = 1;
-
-    while (count++)
+    while (1)
     {
-        LOG_D("Hello RT-Thread!");
-        rt_thread_mdelay(1000);
+        LOG_D("key is %c", buffer_read(keyboard_get_buffer()));
     }
 
     return RT_EOK;

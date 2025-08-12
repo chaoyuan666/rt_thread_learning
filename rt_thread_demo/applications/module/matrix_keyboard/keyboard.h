@@ -9,7 +9,9 @@
  */
 #ifndef APPLICATIONS_MODULE_MATRIX_KEYBOARD_KEYBOARD_H_
 #define APPLICATIONS_MODULE_MATRIX_KEYBOARD_KEYBOARD_H_
+#include "buffer.h"
 
 void keyboard(void);
+struct sbuffer* keyboard_get_buffer(void);
 
 #endif /* APPLICATIONS_MODULE_MATRIX_KEYBOARD_KEYBOARD_H_ */
