@@ -22,6 +22,13 @@
 #include "keyboard.h"
 #include "ultra.h"
 
+#define LED_PIN GET_PIN(D, 8)
+
+rt_timer_t timer;
+void timeout_cb()
+{
+    rt_pin_write(LED_PIN, !rt_pin_read(LED_PIN));
+}
 
 int main(void)
 {
@@ -51,7 +58,7 @@ int main(void)
         LOG_D("key is %c", buffer_read(keyboard_get_buffer()));
     }
     */
-
+    /*
     struct sUltra csb_model = {
             GET_PIN(B, 0),
             GET_PIN(B, 1),
@@ -62,6 +69,17 @@ int main(void)
         LOG_D("dst is %d", ultra_measure(&csb_model));
         rt_thread_mdelay(1000);
     }
+    */
+
+    rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
+    timer = rt_timer_create("tled", timeout_cb, RT_NULL, 1000, RT_TIMER_FLAG_HARD_TIMER | RT_TIMER_FLAG_PERIODIC);
+    rt_timer_start(timer);
 
     return RT_EOK;
 }
+
+void led_stop()
+{
+    rt_timer_stop(timer);
+}
+MSH_CMD_EXPORT(led_stop, STOP LED)
