@@ -26,7 +26,8 @@ struct keyboard{
     rt_base_t col_pin[COL_NUM]; /* Column pin definition */
     int row;
     int col;
-    struct sbuffer buff;
+//    struct sbuffer buff;
+    rt_mailbox_t mb;
 };
 
 #define KEYBOARD_VALUE  {  \
@@ -60,7 +61,8 @@ void keyboard_cb(void *r)
 void keyboard(void)
 {
     int i;
-    buffer_init(&kBoard.buff);
+//    buffer_init(&kBoard.buff);
+    kBoard.mb = rt_mb_create("kbMb", 8, RT_IPC_FLAG_PRIO);
     kBoard.sem = rt_sem_create("ksem", 0, RT_IPC_FLAG_PRIO);
     for (i = 0; i < COL_NUM; ++i) {
         rt_pin_mode(kBoard.col_pin[i], PIN_MODE_OUTPUT);
@@ -87,7 +89,8 @@ void keyboard(void)
             if (rt_pin_read(kBoard.col_pin[i]) == PIN_LOW) {
                 kBoard.col = i;
                 LOG_D("row = %d, col = %d, value = %d", kBoard.row, kBoard.col, kBoard.key[kBoard.row][kBoard.col]);
-                buffer_write(&kBoard.buff, kBoard.key[kBoard.row][kBoard.col]);
+//                buffer_write(&kBoard.buff, kBoard.key[kBoard.row][kBoard.col]);
+                rt_mb_send(kBoard.mb, kBoard.key[kBoard.row][kBoard.col]);
                 break;
             }
         }
@@ -100,7 +103,12 @@ void keyboard(void)
     }
 };
 
-struct sbuffer* keyboard_get_buffer(void)
+//struct sbuffer* keyboard_get_buffer(void)
+//{
+//    return &kBoard.buff;
+//}
+
+rt_mailbox_t keyboard_get_mb(void)
 {
-    return &kBoard.buff;
+    return kBoard.mb;
 }

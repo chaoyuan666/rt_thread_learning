@@ -49,15 +49,17 @@ int main(void)
 //        rt_thread_mdelay(1000);
 //    }
 
-    /*
+    rt_ubase_t value;
     rt_thread_startup(rt_thread_create("keyboard", keyboard, RT_NULL, 1024, 20, 10));
     rt_thread_mdelay(10000);
 
     while (1)
     {
-        LOG_D("key is %c", buffer_read(keyboard_get_buffer()));
+//        LOG_D("key is %c", buffer_read(keyboard_get_buffer()));
+        rt_mb_recv(keyboard_get_mb(), &value, RT_WAITING_FOREVER);
+        LOG_D("key is %c", value);
     }
-    */
+
     /*
     struct sUltra csb_model = {
             GET_PIN(B, 0),
@@ -71,9 +73,11 @@ int main(void)
     }
     */
 
+    /*
     rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
     timer = rt_timer_create("tled", timeout_cb, RT_NULL, 1000, RT_TIMER_FLAG_HARD_TIMER | RT_TIMER_FLAG_PERIODIC);
     rt_timer_start(timer);
+    */
 
     return RT_EOK;
 }

@@ -12,6 +12,7 @@
 #include "buffer.h"
 
 void keyboard(void);
-struct sbuffer* keyboard_get_buffer(void);
+//struct sbuffer* keyboard_get_buffer(void);
+rt_mailbox_t keyboard_get_mb(void);
 
 #endif /* APPLICATIONS_MODULE_MATRIX_KEYBOARD_KEYBOARD_H_ */
