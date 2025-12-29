@@ -14,7 +14,7 @@
 #define DBG_TAG "kBoard"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
-
+#include "msg.h"
 
 #define ROW_NUM  4  /* Keyboard row definition */
 #define COL_NUM  4  /* Keyboard column definition */
@@ -62,6 +62,7 @@ void keyboard(void)
 {
     int i;
 //    buffer_init(&kBoard.buff);
+    struct msg message;
     kBoard.mb = rt_mb_create("kbMb", 8, RT_IPC_FLAG_PRIO);
     kBoard.sem = rt_sem_create("ksem", 0, RT_IPC_FLAG_PRIO);
     for (i = 0; i < COL_NUM; ++i) {
@@ -90,7 +91,10 @@ void keyboard(void)
                 kBoard.col = i;
                 LOG_D("row = %d, col = %d, value = %d", kBoard.row, kBoard.col, kBoard.key[kBoard.row][kBoard.col]);
 //                buffer_write(&kBoard.buff, kBoard.key[kBoard.row][kBoard.col]);
-                rt_mb_send(kBoard.mb, kBoard.key[kBoard.row][kBoard.col]);
+//                rt_mb_send(kBoard.mb, kBoard.key[kBoard.row][kBoard.col]);
+                message.type = MSG_TYPE_KEY;
+                message.value = kBoard.key[kBoard.row][kBoard.col];
+                msg_send(&message);
                 break;
             }
         }

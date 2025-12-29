@@ -21,6 +21,7 @@
 #include "task.h"
 #include "keyboard.h"
 #include "ultra.h"
+#include "msg.h"
 
 #define LED_PIN GET_PIN(D, 8)
 
@@ -30,8 +31,38 @@ void timeout_cb()
     rt_pin_write(LED_PIN, !rt_pin_read(LED_PIN));
 }
 
+struct sUltra csb_model = {
+        .trig = GET_PIN(B, 0),
+        .echo = GET_PIN(B, 1),
+};
+
+void ultra_thread(){
+    struct msg m;
+    ultra_init(&csb_model);
+    while(1) {
+        m.type = MSG_TYPE_DIST;
+        m.value = ultra_measure(&csb_model);
+        msg_send(&m);
+        rt_thread_mdelay(1000);
+    }
+}
+
 int main(void)
 {
+    struct msg message;
+    msg_init();
+    rt_thread_startup(rt_thread_create("key", keyboard, RT_NULL, 1024, 20, 10));
+    rt_thread_startup(rt_thread_create("ultra", ultra_thread, RT_NULL, 1024, 20, 10));
+
+    while(1){
+        msg_rcv(&message);
+        if (message.type == MSG_TYPE_DIST) {
+            LOG_I("dist value: %d mm", message.value);
+        }
+        else if (message.type == MSG_TYPE_KEY) {
+            LOG_I("key value: %c", message.value);
+        }
+    }
 //    key_beep_irq_test();
 //    task_static_test();
 //    task_test();
@@ -49,16 +80,16 @@ int main(void)
 //        rt_thread_mdelay(1000);
 //    }
 
-    rt_ubase_t value;
-    rt_thread_startup(rt_thread_create("keyboard", keyboard, RT_NULL, 1024, 20, 10));
-    rt_thread_mdelay(10000);
-
-    while (1)
-    {
-//        LOG_D("key is %c", buffer_read(keyboard_get_buffer()));
-        rt_mb_recv(keyboard_get_mb(), &value, RT_WAITING_FOREVER);
-        LOG_D("key is %c", value);
-    }
+//    rt_ubase_t value;
+//    rt_thread_startup(rt_thread_create("keyboard", keyboard, RT_NULL, 1024, 20, 10));
+//    rt_thread_mdelay(10000);
+//
+//    while (1)
+//    {
+////        LOG_D("key is %c", buffer_read(keyboard_get_buffer()));
+//        rt_mb_recv(keyboard_get_mb(), &value, RT_WAITING_FOREVER);
+//        LOG_D("key is %c", value);
+//    }
 
     /*
     struct sUltra csb_model = {
